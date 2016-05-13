@@ -38,6 +38,8 @@ def Action(act, *args, **kwargs):
 
 def load_short_messages_gcc(env):
     if verbosity_is_off():
+      env['ASCOMSTR'] = '[AS] $TARGET'
+      env['ASPPCOMSTR'] = '[AS-PP] $TARGET'
       env['CCCOMSTR'] = '[CC] $TARGET'
       env['CXXCOMSTR'] = '[CXX] $TARGET'
       env['LINKCOMSTR'] = '[LD] $TARGET'

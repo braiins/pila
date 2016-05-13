@@ -33,6 +33,7 @@ def generate(env):
         CONFIG_HEADER = 'config.pila.h',
         PILA_BUILTINS=[],
         CCFLAGS_OPT='-O1',
+        ASFLAGSPRFIX_CC='-Wa,'
         )
     env['AR'] = '${CROSS_COMPILE}ar'
     env['AS'] = '${CROSS_COMPILE}as'
@@ -43,6 +44,12 @@ def generate(env):
     # search path based on exact machine type
     env['LINK'] = '${CROSS_COMPILE}ld'
     env['RANLIB'] = '${CROSS_COMPILE}ranlib'
+
+    # Customize assembler with preprocessor flags with CCFLAGS. All
+    # ASFLAGS need to be prefixed with -Wa, option (set via
+    # ASFLAGSPREFIX_CC), so that the compiler passes the flags
+    # correctly to the assembler
+    env.Replace(ASPPFLAGS="$CCFLAGS ${_concat(ASFLAGSPREFIX_CC, ASFLAGS, '', __env__)}")
 
     env.AddMethod(pila.builders.FeatureObject, 'FeatureObject')
     env.AddMethod(pila.builders.ComponentProgram, 'ComponentProgram')
