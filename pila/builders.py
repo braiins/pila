@@ -77,7 +77,7 @@ def ComponentProgram(env, target, *args, **kw):
     # Create the program and register the map file as a side effect,
     # so that the build system is able to track it
     prog = env.Program(target, env['PILA_BUILTINS'],
-                       LINKFLAGS=['$LINKFLAGS', '-Map=%s' % map_file],
+                       LINKFLAGS=['$LINKFLAGS', '-Map=%s' % map_file.path],
                        *args, **kw)
 
     env.SideEffect(map_file, prog)
