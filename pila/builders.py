@@ -72,17 +72,14 @@ def ComponentProgram(env, target, *args, **kw):
     environment. A side effect is a map file
     @param target - where the resulting program is to be stored
     """
-    # Clone the current environment, so that we can append custom
-    # linker flag to generate a map file.
-    component_env = env.Clone()
     map_file = env.File('%s.map' % target)
-    component_env.Append(LINKFLAGS='-Map=%s' % map_file)
 
     # Create the program and register the map file as a side effect,
     # so that the build system is able to track it
-    prog = component_env.Program(target, env['PILA_BUILTINS'],
-                                 *args, **kw)
+    prog = env.Program(target, env['PILA_BUILTINS'],
+                       LINKFLAGS=['$LINKFLAGS', '-Map=%s' % map_file],
+                       *args, **kw)
 
-    component_env.SideEffect(map_file, prog)
+    env.SideEffect(map_file, prog)
 
     return prog
