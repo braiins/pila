@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 import SCons.Warnings
 import os
-
+import traceback
 
 class ProjectToolLoadFailed(SCons.Warnings.Warning):
     pass
@@ -48,6 +48,7 @@ def LoadProject(env, kconfig_prefix, tool_name=None,
 
         env.Tool(tool_name, toolpath=[toolpath])
     except Exception as e:
+        traceback.print_exc()
         raise SCons.Errors.StopError(ProjectToolLoadFailed,
                                     'Failed to load tool: %s for kconfig prefix: %s, tool relative path: %s, Error: %s' %
                                     (tool_name, kconfig_prefix, tool_rel_path, e))
