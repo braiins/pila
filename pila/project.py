@@ -39,19 +39,32 @@ def LoadProject(env, kconfig_prefix, tool_name=None,
     @param tool_rel_path - relative path within the project where the
     tool resides
     """
-    if tool_name is None:
-        tool_name = kconfig_prefix.lower()
+    if not SCons.Util.is_List(kconfig_prefix):
+        kconfig_prefix_list = [kconfig_prefix]
+    else:
+        kconfig_prefix_list = kconfig_prefix
 
-    try:
-        project_path = get_project_path(env, kconfig_prefix)
-        toolpath = os.path.join(project_path, tool_rel_path)
-
-        env.Tool(tool_name, toolpath=[toolpath])
-    except Exception as e:
-        traceback.print_exc()
+    if tool_name is not None and len(kconfig_prefix_list) > 1:
         raise SCons.Errors.StopError(ProjectToolLoadFailed,
-                                    'Failed to load tool: %s for kconfig prefix: %s, tool relative path: %s, Error: %s' %
-                                    (tool_name, kconfig_prefix, tool_rel_path, e))
+                                     'You can specify only ONE kconfig_prefix ' \
+                                     'when a tool name is specified, kconfig ' \
+                                     'prefix: {}, tool name: {}'.format
+                                     (kconfig_prefix_list[0], tool_name))
+
+    for prefix in kconfig_prefix_list:
+        try:
+            project_path = get_project_path(env, prefix)
+            toolpath = os.path.join(project_path, tool_rel_path)
+            real_tool_name = prefix.lower() if tool_name is None else tool_name
+
+            env.Tool(real_tool_name, toolpath=[toolpath])
+        except Exception as e:
+            traceback.print_exc()
+            raise SCons.Errors.StopError(ProjectToolLoadFailed,
+                                         'Failed to load tool: %s for kconfig ' \
+                                         'prefix: %s, tool relative path: %s, ' \
+                                         'Error: %s' %
+                                         (tool_name, prefix, tool_rel_path, e))
 
 
 def ProjectSConscript(env, kconfig_prefix, use_root_variant_dir=True,
