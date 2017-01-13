@@ -29,6 +29,7 @@ def generate(env):
         CROSS_COMPILE = '',
         VARIANT_DIR = 'build',
         DOT_CONFIG = '.config',
+        TOPLEVEL_KCONFIG = 'Kconfig.generated',
         CONFIG_MODULE_NAME = 'config',
         CONFIG_HEADER = 'config.pila.h',
         PILA_BUILTINS=[],
@@ -56,7 +57,7 @@ def generate(env):
     env.AddMethod(pila.builders.ComponentProgram, 'ComponentProgram')
     env.AddMethod(pila.builders.FeatureSConscript, 'FeatureSConscript')
     env.AddMethod(pila.builders.BuiltInObject, 'BuiltInObject')
-    env.AddMethod(pila.configuration.LoadConfig, 'LoadConfig')
+    env.AddMethod(pila.configuration.LoadBuildEnv, 'LoadBuildEnv')
     env.AddMethod(pila.project.LoadProject, 'LoadProject')
     env.AddMethod(pila.project.ProjectSConscript, 'ProjectSConscript')
     env.Append(CCFLAGS='$CCFLAGS_OPT')
@@ -65,6 +66,7 @@ def generate(env):
     # Short message for GCC when verbosity is not desired
     pila.verbosity.load_short_messages_gcc(env)
 
+    pila.configuration.generate(env)
 
 def exists(env):
     return 1
