@@ -65,6 +65,7 @@ def LoadProject(env, kconfig_prefix, tool_name=None,
                                          'prefix: %s, tool relative path: %s, ' \
                                          'Error: %s' %
                                          (tool_name, prefix, tool_rel_path, e))
+    env.Append(PILA_KCONFIG_PROJECT_PREFIX_LIST=kconfig_prefix_list)
 
 
 def ProjectSConscript(env, kconfig_prefix, use_root_variant_dir=True,

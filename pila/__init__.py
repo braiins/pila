@@ -34,6 +34,7 @@ def generate(env):
         CONFIG_HEADER = 'config.pila.h',
         PILA_BUILTINS=[],
         PILA_OBJECTS=[],
+        PILA_KCONFIG_PROJECT_PREFIX_LIST=[],
         CCFLAGS_OPT='-O1',
         ASFLAGSPRFIX_CC='-Wa,'
         )
