@@ -182,6 +182,8 @@ class PythonConfigGenerator(ConfigGenerator):
     def output_comment(self, comment):
         self.out_file.write('# %s\n' % comment)
 
+    def output_footer(self):
+        self.out_file.write('        pass\n')
 
     def output_header(self):
         self.out_file.write("""
