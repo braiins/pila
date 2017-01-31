@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 import pila.verbosity
+import pila.events
 
 def FeatureObject(env, target=None, source=None, is_enabled=True, *args, **kw):
     """
@@ -35,6 +36,8 @@ def FeatureObject(env, target=None, source=None, is_enabled=True, *args, **kw):
         # being injected via imacro (See configuration.LoadConfig)
         env.Depends(feature_object, env.subst('#$VARIANT_DIR/$CONFIG_HEADER'))
         env.Append(PILA_OBJECTS=feature_object)
+        pila.events.dispatcher.register_feature_object(env, target, source,
+                                                       *args, **kw)
 
     return feature_object
 
@@ -64,6 +67,7 @@ def BuiltInObject(env, target_env):
                                       '[LD-builtin] $TARGET')
     cmd = env.Command('built-in.o', env['PILA_OBJECTS'], action=ld_action)
     target_env.Append(PILA_BUILTINS=cmd)
+    pila.events.dispatcher.register_built_in_object(env, target_env)
 
 
 def ComponentProgram(env, target, *args, **kw):
@@ -81,5 +85,6 @@ def ComponentProgram(env, target, *args, **kw):
                        *args, **kw)
 
     env.SideEffect(map_file, prog)
+    pila.events.dispatcher.register_component_program(env, target, *args, **kw)
 
     return prog
