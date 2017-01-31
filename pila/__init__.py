@@ -26,12 +26,12 @@ def generate(env):
     """Add Builders and construction variables to the Environment.
     """
     env.SetDefault(
-        CROSS_COMPILE = '',
-        VARIANT_DIR = 'build',
-        DOT_CONFIG = '.config',
-        TOPLEVEL_KCONFIG = 'Kconfig.generated',
-        CONFIG_MODULE_NAME = 'config',
-        CONFIG_HEADER = 'config.pila.h',
+        CROSS_COMPILE='',
+        VARIANT_DIR='build',
+        DOT_CONFIG='.config',
+        TOPLEVEL_KCONFIG='Kconfig.generated',
+        CONFIG_MODULE_NAME='config',
+        CONFIG_HEADER='config.pila.h',
         PILA_BUILTINS=[],
         PILA_OBJECTS=[],
         PILA_KCONFIG_PROJECT_PREFIX_LIST=[],
