@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 import pila.builders
 import pila.configuration
 import pila.project
+import pila.events
+import pila.cmake
 import os
 
 
@@ -36,8 +38,9 @@ def generate(env):
         PILA_OBJECTS=[],
         PILA_KCONFIG_PROJECT_PREFIX_LIST=[],
         CCFLAGS_OPT='-O1',
-        ASFLAGSPRFIX_CC='-Wa,'
-        )
+        ASFLAGSPRFIX_CC='-Wa,',
+        ENABLE_CMAKE_GEN=False
+    )
     env['AR'] = '${CROSS_COMPILE}ar'
     env['AS'] = '${CROSS_COMPILE}as'
     env['CC'] = '${CROSS_COMPILE}gcc'
@@ -68,6 +71,9 @@ def generate(env):
     pila.verbosity.load_short_messages_gcc(env)
 
     pila.configuration.generate(env)
+
+    if env['ENABLE_CMAKE_GEN']:
+        pila.events.dispatcher.subscribe(pila.cmake.CMakeGen())
 
 def exists(env):
     return 1
