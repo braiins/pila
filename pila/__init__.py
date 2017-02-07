@@ -65,7 +65,6 @@ def generate(env):
     env.AddMethod(pila.project.LoadProject, 'LoadProject')
     env.AddMethod(pila.project.ProjectSConscript, 'ProjectSConscript')
     env.Append(CCFLAGS='$CCFLAGS_OPT')
-    env.VariantDir(env.subst('$VARIANT_DIR'), '.', duplicate=0)
 
     # Short message for GCC when verbosity is not desired
     pila.verbosity.load_short_messages_gcc(env)
