@@ -74,7 +74,7 @@ def import_config_module(env):
         env.Append(CPPPATH = '#$VARIANT_DIR')
 
         env.Command(os.path.join('$VARIANT_DIR', '$CONFIG_HEADER'),
-                    env.subst('$DOT_CONFIG'),
+                    '$DOT_CONFIG',
                     action=pila.verbosity.Action(create_config_header,
                                                  'Creating configuration ' \
                                                  'header: $TARGET'))
