@@ -151,10 +151,11 @@ class CMakeGen(object):
         :param args: unused
         :param kw:
         """
-        cmake_snippet = env.Command('CMakeLists.snippet',
-                                     env['PILA_CMAKE_SRC'],
-                                     action=self.cmake_snippet_action)
-        target_env.Append(PILA_CMAKE_SNIPPET=cmake_snippet)
+        if 'PILA_CMAKE_SRC' in env:
+            cmake_snippet = env.Command('CMakeLists.snippet',
+                                        env['PILA_CMAKE_SRC'],
+                                        action=self.cmake_snippet_action)
+            target_env.Append(PILA_CMAKE_SNIPPET=cmake_snippet)
 
     def register_component_program(self, env, target, *args, **kw):
         """
