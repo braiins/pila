@@ -41,11 +41,14 @@ for i in range(1, 15):
 ### BuiltInObject
 This builder has no counter part in SCons. It is used to collect all feature
 objects into 1 relatively linked object file (named ```built-in.o```) at the
-level where the current SConscript is nested. The motivation is to simplify
-the link step where only a few top-level built-in objects are being collected
-. This idea has been borrowed from Linux kernel build system. Example of a
-SConscript in a nested project:
-```
+level where the current SConscript is nested. This is typically the top level
+ SConscript of a software asset (sub-project).
+
+The motivation is to simplify the link step where only a few top-level 
+built-in objects are being collected. This idea has been borrowed from Linux 
+kernel build system. Example of a SConscript in a nested project:
+
+```python
 import os
 
 Import('env')
@@ -79,13 +82,97 @@ as ```FREERTOS_DRIVERS_ADC``` feature is set.
 env.FeatureSConscript(dirs=['adc'],
 		      is_enabled=env['CONFIG'].FREERTOS_DRIVERS_ADC)
 ```
+
 ### LoadBuildEnv
+This method is responsible for loading/generating the global configuration of
+the project. If no configuration exists, **PILA** switches to
+*configuration mode* and an appropriate tool (**kconfig-qconf**) is started by
+default.
+
+Once the project configuration has been loaded (assuming a regular build has
+been triggered), the method calls back user specified setup method.
+
+
+#### Example of SConstruct
+```python
+def setup_build_env(env):
+    project_kconfig_prefices = ['LORA',
+				'DRIVERS'
+				]
+
+    env.LoadProject(project_kconfig_prefices)
+    env.Append(CCFLAGS=['-save-temps=obj', '-g3', '-O0'])
+    # Enable debugging
+    env.Append(CPPDEFINES=['DEBUG'])
+
+    env.Append(LIBS=['m'])
+    env.Append(LINKFLAGS=['--gc-sections'])
+
+    env.SConscript('SConscript', variant_dir=global_env['VARIANT_DIR'],
+		   duplicate=0)
+
+global_env = Environment(CROSS_COMPILE='arm-none-eabi-',
+			 CCFLAGS_OPT='-Os',
+			 TOPLEVEL_KCONFIG='Kconfig',
+			 VARIANT_DIR='build-${CONFIG.APP_DEMO}',
+			 ENABLE_CMAKE_GEN=True)
+Export('global_env')
+
+global_env.Tool('pila', toolpath=['pila'])
+global_env.LoadBuildEnv(setup_build_env)
+```
+
 ### LoadProject
+Each software asset (sub-project) that participates in a build may provide its
+own tool that extends the current construction environment with e.g.:
+- header search path
+- custom asset specific builders (code generators etc.)
+
+This method loads tools for all specified projects. The project names are
+in upper case as specified in configuration.
+```python
+project_kconfig_prefices = ['LORA',
+			    'DRIVERS'
+			   ]
+env.LoadProject(project_kconfig_prefices)
+```
+
 ### ProjectSConscript
+This method is equivalent to
+[SConscript](http://www.scons.org/doc/HTML/scons-user/ch14.html). It reads
+SConscripts of all specified software assets (sub-projects).
+
+The example below assumes ```project_kconfig_prefices``` contains valid
+project names within the current configuration.
+
+```python
+env.ProjectSConscript(project_kconfig_prefices)
+```
+
+# Build Modes
+## Configuration Mode
+Configuration mode can be explicitely triggered by requesting the **conf**
+target. E.g. ```scons conf```. This requires having a kconfig-qconf frontend
+in search path.
+The result of a configuration mode is a global project configuration that is
+transformed into a python module **config.py** that is further used by the
+**PILA** tool.
+
+This mode is also automatically triggered if the main project config file
+doesn't exist. In that case it starts the **kconfig-qconf** frontend.
+
+Alternately in the rare case where the global configuration file exists but
+has not been transformed into **config.py**, the configuration mode is also
+automatically triggered. It genereates **config.py** and ask for rerunning
+the built.
+
+
+## Standard Build Mode
+Standard build assumes **config.py** present. The project main target is built.
 
 # CMake Autogen
 CMakeLists autogeneration is controlled by ```TSR_ENABLE_CMAKE_GEN```
-construction varabile. When enabled, each ```ComponentProgram``` produced by
+construction variable. When enabled, each ```ComponentProgram``` produced by
 the build system will be accompanied by a CMakeLists file. The name
 of the file is: ```{TARGET}.CMakeLists.txt```, where ```{TARGET}``` is the
 target name of the ```ComponentProgram```.
