@@ -136,7 +136,8 @@ class CMakeGen(object):
         sources = map(env.File, env.Flatten(source))
         env.Append(PILA_CMAKE_SRC=sources)
 
-    def register_built_in_object(self, env, target_env, *args, **kw):
+    def register_built_in_object(self, env, target_env, built_in_name, *args,
+                                 **kw):
         """Generates a CMake snippet for the set of sources.
 
         This callback is triggered when a built-in object is declared in
@@ -148,11 +149,13 @@ class CMakeGen(object):
         :param env: environment where the feature object is to be built
         :param target_env: target environment where the resulting cmake snippet
         needs to be registered
+        :param built_in_name: see BuiltInObject
         :param args: unused
         :param kw:
         """
         if 'PILA_CMAKE_SRC' in env:
-            cmake_snippet = env.Command('CMakeLists.snippet',
+            snippet_name = '{}.CMakeLists.snippet'.format(built_in_name)
+            cmake_snippet = env.Command(snippet_name,
                                         env['PILA_CMAKE_SRC'],
                                         action=self.cmake_snippet_action)
             target_env.Append(PILA_CMAKE_SNIPPET=cmake_snippet)

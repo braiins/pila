@@ -58,16 +58,20 @@ def FeatureSConscript(env, is_enabled=True, *args, **kw):
     return result
 
 
-def BuiltInObject(env, target_env):
+def BuiltInObject(env, target_env, built_in_name='built-in.o'):
     """
     @param target_env - target environment where the resulting
     built-in object is to be registered
+    @param built_in_name - allows overriding the standard object name if
+    there are e.g. 2 objects from 2 environment in the same output directory
+    being created.
     """
     ld_action = pila.verbosity.Action('$LINK -r -o $TARGET $SOURCES',
                                       '[LD-builtin] $TARGET')
     cmd = env.Command('built-in.o', env['PILA_OBJECTS'], action=ld_action)
     target_env.Append(PILA_BUILTINS=cmd)
-    pila.events.dispatcher.register_built_in_object(env, target_env)
+    pila.events.dispatcher.register_built_in_object(env, target_env,
+                                                    built_in_name=built_in_name)
 
 
 def ComponentProgram(env, target, *args, **kw):
