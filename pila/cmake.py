@@ -171,11 +171,14 @@ class CMakeGen(object):
         :param args: unused
         :param kw: unused
         """
-        print('CMakeGen component program %s' % target)
-        # target is passed as the first source
-        cmake = env.Command('%s.CMakeLists.txt' % target,
-                            [target] + env['PILA_CMAKE_SNIPPET'],
-                            action=self.cmake_action)
+        if 'PILA_CMAKE_SNIPPET' in env:
+            # target is passed as the first source
+            cmake = env.Command('%s.CMakeLists.txt' % target,
+                                [target] + env['PILA_CMAKE_SNIPPET'],
+                                action=self.cmake_action)
+        else:
+            print('Warning: no CMake snippets for {}, this probably means '
+                  'that no built-in object has been declared'.format(target))
 
 
 
