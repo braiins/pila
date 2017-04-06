@@ -68,7 +68,8 @@ def BuiltInObject(env, target_env, built_in_name='built-in.o'):
     """
     ld_action = pila.verbosity.Action('$LINK -r -o $TARGET $SOURCES',
                                       '[LD-builtin] $TARGET')
-    cmd = env.Command('built-in.o', env['PILA_OBJECTS'], action=ld_action)
+    cmd = env.Command(built_in_name, env['PILA_OBJECTS'], \
+                             action=ld_action)
     target_env.Append(PILA_BUILTINS=cmd)
     pila.events.dispatcher.register_built_in_object(env, target_env,
                                                     built_in_name=built_in_name)
