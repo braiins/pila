@@ -171,7 +171,7 @@ the built.
 Standard build assumes **config.py** present. The project main target is built.
 
 # CMake Autogen
-CMakeLists autogeneration is controlled by ```TSR_ENABLE_CMAKE_GEN```
+CMakeLists autogeneration is controlled by ```ENABLE_CMAKE_GEN```
 construction variable. When enabled, each ```ComponentProgram``` produced by
 the build system will be accompanied by a CMakeLists file. The name
 of the file is: ```{TARGET}.CMakeLists.txt```, where ```{TARGET}``` is the
