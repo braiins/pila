@@ -29,6 +29,7 @@ Similar to [Object](http://www.scons.org/doc/HTML/scons-user/ch02s02.html).
 The example builds a set of driver modules that consists of a main platform
 module and conditionally built timer instances enabled in the current
 configuration:
+
 ```
 env.FeatureObject(source=['timer--platform.c'])
 
